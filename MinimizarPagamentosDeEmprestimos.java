@@ -1,57 +1,66 @@
-import java.util.Arrays;
+import java.util.*;
 
 public class MinimizarPagamentosDeEmprestimos {
 
-    public static void minimizarPagamentos(double[] taxasDeJuros) {
-        int n = taxasDeJuros.length;
-        Arrays.sort(taxasDeJuros);
-
-        double[][] dp = new double[n][n];
-
-        // Preenche a matriz DP
-        // i = emprestimos, j = meses
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j <= i; j++) {
-                if (i == 0) {
-                    dp[i][j] = 1000 * Math.pow(taxasDeJuros[i], j + 1);
-                } else {
-                    dp[i][j] = dp[i - 1][j] + 1000 * Math.pow(taxasDeJuros[i], j + 1);
-                    if (j > 0) {
-                        dp[i][j] = Math.min(dp[i][j], dp[i - 1][j - 1] + 1000 * Math.pow(taxasDeJuros[i], j + 1));
-                    }
-                }
-            }
-            System.out.println(Arrays.toString(dp[i]));
+    public static void main(String[] args) {
+        double[] taxasDeJuros = { 1.1, 1.5, 1.25, 1.05 }; // Exemplo de taxas de juros
+        double[] ordemDePagamento = calcularOrdemPagamento(taxasDeJuros);
+        System.out.println("Ordem de pagamento ótima:");
+        int i = 1;
+        for (double d : ordemDePagamento) {
+            System.out.println(i+" - Pagar o emprestimo do Banco com taxas de: "+d);
+            i++;
         }
-
-
-        // Encontra a ordem ótima
-        int[] ordem = new int[n];
-        int j = n - 1;
-        for (int i = n - 1; i >= 0; i--) {
-            if (j == 0 || dp[i][j] < dp[i][j - 1]) {
-                ordem[j] = i;
-                j--;
-            }
-        }
-
-        // Imprime a ordem ótima
-        System.out.println("Ordem ótima para pagamento dos empréstimos:");
-        for (int i = 0; i < n; i++) {
-            System.out.println(
-                    "Mês " + (i + 1) + ": Banco " + (ordem[i] + 1) + " (taxa de juros: " + taxasDeJuros[ordem[i]]
-                            + ") - valor: R$" + 1000 * Math.pow(taxasDeJuros[ordem[i]], i + 1));
-        }
-
-        // Imprime o valor total gasto mínimo
-        System.out.println("Valor total gasto mínimo: R$" + dp[n - 1][n - 1]);
     }
 
+    public static double[] calcularOrdemPagamento(double[] taxasDeJuros) {
+        int n = taxasDeJuros.length;
+        double matrix[][] = new double[n][n];
+        List<Integer> disponiveis = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            disponiveis.add(i);
+        }
+        double[] ordemDePagamento = new double[n];
+
+        for (int j = 0; j < n; j++) {
+            for (int i = 0; i < n; i++) {
+                // Percorre a Matriz de Pagamentos e preenche com os valores com juros
+                matrix[i][j] = Math.pow(taxasDeJuros[i], j + 1) * 1000;
+            }
+
+        }
 
 
-    public static void main(String[] args) {
-        double[] taxasDeJuros = { 1.1, 1.08, 1.22, 1.12, 1.3, 1.28, 1.25, 1.15, 1.18, 1.35, 1.4 };
-        minimizarPagamentos(taxasDeJuros);
+        printMatrix(matrix);
+        
 
+        
+        for (int j = 0; j < n; j++) {
+            //atribuições para garantir que o loop ira passar por toda a matriz
+            int melhorIndice = -1;
+            double maiorValor = Double.MIN_VALUE;
+            for (int i : disponiveis) {
+                if (matrix[i][j] > maiorValor) {
+                    melhorIndice = i;
+                    maiorValor = matrix[i][j];
+                }
+            }
+            //Adiciona o maior valor da coluna na ordem de pagamento e remove o indice da lista de disponiveis
+            ordemDePagamento[j] = taxasDeJuros[melhorIndice];
+            disponiveis.remove((Integer) melhorIndice);
+        }
+
+        return ordemDePagamento;
+    }
+
+    public static void printMatrix(double[][] matrix) {
+        // Imprime a matriz
+        for (double[] ds : matrix) {
+            for (double d : ds) {
+                System.out.printf("%.2f",d);
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
     }
 }
