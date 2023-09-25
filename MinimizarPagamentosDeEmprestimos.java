@@ -48,14 +48,10 @@ public class MinimizarPagamentosDeEmprestimos {
 
     public static void toString(double[][] matrix, double[] ordemDePagamento, double total) {
         // Imprime a matriz
-        int count=0;
         for (double[] ds : matrix) {
             for (double d : ds) {
                 System.out.printf("%.2f", d);
                 System.out.print(" ");
-                if (d==0) {
-                    count++;
-                }
             }
             System.out.println();
         }
@@ -69,7 +65,6 @@ public class MinimizarPagamentosDeEmprestimos {
             i++;
         }
         System.out.printf("O pagamento minimo é de: " +"%.2f\n", total);
-        System.out.println("a Matriz deixou de percorrer: "+count+" casas");
         
     }
 }
