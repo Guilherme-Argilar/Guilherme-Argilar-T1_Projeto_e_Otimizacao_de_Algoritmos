@@ -1,12 +1,21 @@
-
 public class StrassenAlgorithm {
 
     public static void main(String[] args) {
-        int[][] A = { { 12, 34 }, { 22, 10 } };
-        int[][] B = { { 3, 4 }, { 2, 1 } };
-        int[][] C = strassen(A, B);
-        for (int i = 0; i < C.length; i++) {
-            for (int j = 0; j < C.length; j++) {
+        int[][] A = { { 1, 2, 3 }, {1, 2, 3}, {0, 0, 2 } };
+        int[][] B = { { 1, 0, 0}, { 0, 1, 0 }, { 0, 0, 1 } };
+
+        int maxSize = Math.max(Math.max(A.length, B.length), Math.max(A[0].length, B[0].length));
+        if (maxSize % 2 != 0) {
+            maxSize++;
+        }
+        System.out.println("Matriz A:" + maxSize);
+        int[][] paddedA = padMatrix(A, maxSize);
+        int[][] paddedB = padMatrix(B, maxSize);
+
+        
+        int[][] C = strassen(paddedA, paddedB);
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < B[0].length; j++) {
                 System.out.print(C[i][j] + " ");
             }
             System.out.println();
@@ -100,4 +109,13 @@ public class StrassenAlgorithm {
         return C;
     }
 
+    public static int[][] padMatrix(int[][] matrix, int size) {
+        int[][] paddedMatrix = new int[size][size];
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                paddedMatrix[i][j] = matrix[i][j];
+            }
+        }
+        return paddedMatrix;
+    }
 }
