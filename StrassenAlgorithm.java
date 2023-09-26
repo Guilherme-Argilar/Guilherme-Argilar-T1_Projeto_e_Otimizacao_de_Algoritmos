@@ -9,8 +9,8 @@ public class StrassenAlgorithm {
             maxSize++;
         }
         System.out.println("Matriz A:" + maxSize);
-        int[][] paddedA = padMatrix(A, maxSize);
-        int[][] paddedB = padMatrix(B, maxSize);
+        int[][] paddedA = padMatriz(A, maxSize);
+        int[][] paddedB = padMatriz(B, maxSize);
 
         
         int[][] C = strassen(paddedA, paddedB);
@@ -33,29 +33,17 @@ public class StrassenAlgorithm {
         } else {
             // Divide as matrizes em quatro submatrizes
             int newSize = n / 2;
-            int[][] A11 = new int[newSize][newSize];
-            int[][] A12 = new int[newSize][newSize];
-            int[][] A21 = new int[newSize][newSize];
-            int[][] A22 = new int[newSize][newSize];
+            int [][][] submatrizesA = divideMatriz(A);
+            int [][][] submatrizesB = divideMatriz(B);
+            int[][] A11 = submatrizesA[0];
+            int[][] A12 = submatrizesA[1];
+            int[][] A21 = submatrizesA[2];
+            int[][] A22 = submatrizesA[3];
 
-            int[][] B11 = new int[newSize][newSize];
-            int[][] B12 = new int[newSize][newSize];
-            int[][] B21 = new int[newSize][newSize];
-            int[][] B22 = new int[newSize][newSize];
-
-            for (int i = 0; i < newSize; i++) {
-                for (int j = 0; j < newSize; j++) {
-                    A11[i][j] = A[i][j];
-                    A12[i][j] = A[i][j + newSize];
-                    A21[i][j] = A[i + newSize][j];
-                    A22[i][j] = A[i + newSize][j + newSize];
-
-                    B11[i][j] = B[i][j];
-                    B12[i][j] = B[i][j + newSize];
-                    B21[i][j] = B[i + newSize][j];
-                    B22[i][j] = B[i + newSize][j + newSize];
-                }
-            }
+            int[][] B11 = submatrizesB[0];
+            int[][] B12 = submatrizesB[1];
+            int[][] B21 = submatrizesB[2];
+            int[][] B22 = submatrizesB[3];
 
             // Calcula sete produtos recursivamente
             int[][] P1 = strassen(A11, subtrairMatriz(B12, B22));
@@ -87,6 +75,23 @@ public class StrassenAlgorithm {
         }
     }
 
+    public static int[][][] divideMatriz(int[][] matriz) {
+        int n = matriz.length;
+        int newSize = n / 2;
+        int[][][] submatrizes = new int[4][newSize][newSize];
+    
+        for (int i = 0; i < newSize; i++) {
+            for (int j = 0; j < newSize; j++) {
+                submatrizes[0][i][j] = matriz[i][j];  // A11
+                submatrizes[1][i][j] = matriz[i][j + newSize];  // A12
+                submatrizes[2][i][j] = matriz[i + newSize][j];  // A21
+                submatrizes[3][i][j] = matriz[i + newSize][j + newSize];  // A22
+            }
+        }
+    
+        return submatrizes;
+    }
+  
     public static int[][] somarMatriz(int[][] A, int[][] B) {
         int n = A.length;
         int[][] C = new int[n][n];
@@ -109,13 +114,13 @@ public class StrassenAlgorithm {
         return C;
     }
 
-    public static int[][] padMatrix(int[][] matrix, int size) {
-        int[][] paddedMatrix = new int[size][size];
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                paddedMatrix[i][j] = matrix[i][j];
+    public static int[][] padMatriz(int[][] matriz, int size) {
+        int[][] paddedMatriz = new int[size][size];
+        for (int i = 0; i < matriz.length; i++) {
+            for (int j = 0; j < matriz[0].length; j++) {
+                paddedMatriz[i][j] = matriz[i][j];
             }
         }
-        return paddedMatrix;
+        return paddedMatriz;
     }
 }
