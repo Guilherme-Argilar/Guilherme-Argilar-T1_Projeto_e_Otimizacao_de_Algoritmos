@@ -1,19 +1,21 @@
 public class StrassenAlgorithm {
 
     public static void main(String[] args) {
+
         int[][] A = { { 1, 2, 3 }, {1, 2, 3}, {0, 0, 2 } };
         int[][] B = { { 1, 0, 0}, { 0, 1, 0 }, { 0, 0, 1 } };
 
-        int maxSize = Math.max(Math.max(A.length, B.length), Math.max(A[0].length, B[0].length));
-        if (maxSize % 2 != 0) {
+        int maxSize = Math.max(Math.max(A.length, B.length), Math.max(A[0].length, B[0].length)); // pega o maior lado entre as matrizes
+        if (maxSize % 2 != 0) { //caso o maior lado seja um valor impar, adiciona 1 para tornar par
             maxSize++;
         }
-        System.out.println("Matriz A:" + maxSize);
-        int[][] paddedA = padMatriz(A, maxSize);
-        int[][] paddedB = padMatriz(B, maxSize);
+        int[][] paddedA = normalizaMatriz(A, maxSize); //normaliza as matrizes para o maior tamanho
+        int[][] paddedB = normalizaMatriz(B, maxSize);
 
         
         int[][] C = strassen(paddedA, paddedB);
+
+        
         for (int i = 0; i < A.length; i++) {
             for (int j = 0; j < B[0].length; j++) {
                 System.out.print(C[i][j] + " ");
@@ -31,10 +33,12 @@ public class StrassenAlgorithm {
             C[0][0] = A[0][0] * B[0][0];
             return C;
         } else {
+
             // Divide as matrizes em quatro submatrizes
-            int newSize = n / 2;
-            int [][][] submatrizesA = divideMatriz(A);
-            int [][][] submatrizesB = divideMatriz(B);
+            
+            int [][][] submatrizesA = divideMatriz(A); //divide a matriz A em 4 submatrizes
+            int [][][] submatrizesB = divideMatriz(B); //divide a matriz B em 4 submatrizes
+
             int[][] A11 = submatrizesA[0];
             int[][] A12 = submatrizesA[1];
             int[][] A21 = submatrizesA[2];
@@ -59,15 +63,16 @@ public class StrassenAlgorithm {
             int[][] C12 = somarMatriz(P1, P2);
             int[][] C21 = somarMatriz(P3, P4);
             int[][] C22 = subtrairMatriz(subtrairMatriz(somarMatriz(P5, P1), P3), P7);
-
-            // Combina os quatro blocos para formar a matriz resultante
+            
+            int newSize = n / 2;
             int[][] C = new int[n][n];
+            // Combina os quatro blocos para formar a matriz resultante
             for (int i = 0; i < newSize; i++) {
                 for (int j = 0; j < newSize; j++) {
-                    C[i][j] = C11[i][j];
-                    C[i][j + newSize] = C12[i][j];
-                    C[i + newSize][j] = C21[i][j];
-                    C[i + newSize][j + newSize] = C22[i][j];
+                    C[i][j] = C11[i][j]; //C11
+                    C[i][j + newSize] = C12[i][j]; //C12
+                    C[i + newSize][j] = C21[i][j]; //C21
+                    C[i + newSize][j + newSize] = C22[i][j]; //C22
                 }
             }
 
@@ -76,7 +81,7 @@ public class StrassenAlgorithm {
     }
 
     public static int[][][] divideMatriz(int[][] matriz) {
-        int n = matriz.length;
+        int n = matriz.length; // como a matriz foi normalizada antes desta função ser chamada, n é sempre par
         int newSize = n / 2;
         int[][][] submatrizes = new int[4][newSize][newSize];
     
@@ -114,11 +119,13 @@ public class StrassenAlgorithm {
         return C;
     }
 
-    public static int[][] padMatriz(int[][] matriz, int size) {
-        int[][] paddedMatriz = new int[size][size];
+    // retorna a matriz normalizada para o tamanho size
+    public static int[][] normalizaMatriz(int[][] matriz, int n) {
+        int[][] paddedMatriz = new int[n][n];
         for (int i = 0; i < matriz.length; i++) {
             for (int j = 0; j < matriz[0].length; j++) {
-                paddedMatriz[i][j] = matriz[i][j];
+                // atribui o valor da matriz original para a paddedMatriz, o restante da matriz sera 0
+                paddedMatriz[i][j] = matriz[i][j]; 
             }
         }
         return paddedMatriz;
